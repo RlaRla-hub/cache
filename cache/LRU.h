@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <list>
+#include <optional>
 
 
 //хэш для данных, std::unordered_map 
@@ -38,18 +39,32 @@ public:
 			expulsion();
 		     
 			order.emplace_front(key, data);
-			typename  std::list<std::pair<Key, Data>>::iterator it = std::prev(order.end());
+			typename  std::list<std::pair<Key, Data>>::iterator it = order.begin();
 			dataMap[key] = it;
 	}
 
-	void getData()
+	std::optional<Data> getData(Key key)
 	{
-
+		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
+		if (mapIt == dataMap.end()) {
+			return std::nullopt;  // Ключа вообще нет в кэше
+		}
+		typename std::list<std::pair<Key, Data>>::iterator it = std::find_if(order.begin(), order.end(),
+			[key](const std::pair<Key, Data>& p) { return p.first == key; });
+		if (it != order.end()) {
+			order.splice(order.begin(), order, it);
+			return (mapIt->second)->second;
+		}
+		
+	    return std::nullopt;
 	}
 
-	void rmData()
+	void rmData(Key key)
 	{
-
+		std::remove_if(order.begin(), order.end(), [key](const std::pair<Key, Data>& p) { return p.first == key; });
+		order.erase(std::prev(order.end()));
+		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
+		dataMap.erase(mapIt);
 	}
 
 	size_t getSize()
