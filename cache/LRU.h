@@ -26,12 +26,13 @@ private:
 public:
 	LRU(size_t size): size(size){}
 
-	void putData(Key key, Data data)
+	template<typename K, typename D>
+	void putData(K&& key, D&& data)
 	{
 		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
 		if (mapIt != dataMap.end())
 		{
-			mapIt->second->second = data;
+			mapIt->second->second = std::forward<D>(data);
 			order.splice(order.begin(), order, mapIt->second);
 			return;
 		}
@@ -41,31 +42,46 @@ public:
 			expulsion();
 		}
 		     
-	    order.emplace_front(key, data);
-		dataMap[key] = order.begin();
+		order.emplace_front(std::forward<K>(key), std::forward<D>(data));
+		dataMap[order.front().first] = order.begin(); 
 	}
 
-	std::optional<Data> getData(Key key)
+	template <typename K>
+	std::optional<Data> getData(K&& key) 
 	{
 		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
 		if (mapIt == dataMap.end()) {
-			return std::nullopt;  // Ключа вообще нет в кэше
+			return std::nullopt; 
 		}
 		
 		order.splice(order.begin(), order, mapIt->second);
 		return (mapIt->second)->second;
 	}
 
-	void rmData(Key key)
+	template <typename K>
+	void rmData(K&& key)
 	{
 		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
-		order.erase(mapIt->second);
-		dataMap.erase(mapIt);
+		if (mapIt != dataMap.end())
+		{
+			order.erase(mapIt->second);
+			dataMap.erase(mapIt);
+		}
 	}
 
-	size_t getSize()
+	size_t getSize() const noexcept
 	{
 		return size;
 	}
 
+	void clear() noexcept
+	{
+		dataMap.clear();
+		order.clear();
+	}
+
+	bool empty() const noexcept 
+	{ 
+		return order.empty(); 
+	}
 };

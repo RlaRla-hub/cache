@@ -26,5 +26,9 @@ int main()
     if (lruCache.getData("Maria") != std::nullopt)
         std::cout << lruCache.getData("Maria").value() << "\n";
 
+    lruCache.clear();
+
+    if (lruCache.getData("Elena") != std::nullopt)
+        std::cout << lruCache.getData("Elena").value() << "\n";
 }
 
