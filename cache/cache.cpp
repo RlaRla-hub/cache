@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include "LRU.h"
+#include "LFU.h"
 
 int main()
 {
@@ -30,5 +31,24 @@ int main()
 
     if (lruCache.getData("Elena") != std::nullopt)
         std::cout << lruCache.getData("Elena").value() << "\n";
+
+
+    //проверим размер
+    LFU cache(3);
+    std::cout << "Cache size:" << cache.getSize() << "\n";
+
+    //положим значение
+    cache.put("Alice", "password");
+
+    //вернём значение
+    //std::cout << "Alice:" << cache.get("Alice").value_or("Key not found") << "\n";
+    std::cout << "Alice:" << cache.get("Alice").value() << "\n";
+
+    //если используем не существующий ключ с get()
+    std::cout << "NotKey:" << cache.get("NotKey").value_or("Key not found") << "\n";
+
+    //если используем существующий ключ с put()
+    cache.put("Alice", "newPassword");
+
 }
 
