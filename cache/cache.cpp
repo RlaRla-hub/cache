@@ -4,6 +4,7 @@
 
 int main()
 {
+    std::cout << "Least Recently Used cache" << "\n";
     LRU<std::string, std::string> lruCache(3);
     lruCache.putData("Alice", "password1234");
     lruCache.putData("Margo", "0000");
@@ -32,23 +33,45 @@ int main()
     if (lruCache.getData("Elena") != std::nullopt)
         std::cout << lruCache.getData("Elena").value() << "\n";
 
+    std::cout << "\n";
+    std::cout << "**********************  \n";
+    std::cout << "\n";
 
-    //проверим размер
+
+    std::cout << "Least Frequently Used cache" << "\n";
+    //testing size
     LFU cache(3);
-    std::cout << "Cache size:" << cache.getSize() << "\n";
+    std::cout << "Cachesize: " << cache.getSize() << "\n";
+    std::cout << "\n";
 
-    //положим значение
+    //puting value
     cache.put("Alice", "password");
+    cache.put("Maria", "rlarla");
+    cache.put("Seva", "2718");
 
-    //вернём значение
-    //std::cout << "Alice:" << cache.get("Alice").value_or("Key not found") << "\n";
-    std::cout << "Alice:" << cache.get("Alice").value() << "\n";
+    //returning value
+    std::cout << "Alice: " << cache.get("Alice").value_or("Key not found") << "\n";
+    std::cout << "Margarita: " << cache.get("Maria").value_or("Key not found") << "\n";
+    std::cout << "Seva: " << cache.get("Seva").value_or("Key not found") << "\n";
 
-    //если используем не существующий ключ с get()
-    std::cout << "NotKey:" << cache.get("NotKey").value_or("Key not found") << "\n";
-
-    //если используем существующий ключ с put()
+    //puting the same value a second time
     cache.put("Alice", "newPassword");
 
+    //puting the value so that number of values exceeds size of cache
+    cache.put("Lena", "1234");
+
+    //returning new value
+    std::cout << "Lena: " << cache.get("Lena").value_or("Key not found") << "\n";
+    std::cout << "\n";
+
+    //if using a nonexistent key with get()
+    std::cout << "NotKey: " << cache.get("NotKey").value_or("Key not found") << "\n";
+
+    //checking that the old value is removed
+    std::cout << "Maria: " << cache.get("Maria").value_or("Key not found") << "\n";
+
+    std::cout << "\n";
+
+    return 0;
 }
 
