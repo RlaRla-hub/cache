@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include "LRU.h"
 #include "LFU.h"
+#include "FIFO.h"
 
 int main()
 {
@@ -71,6 +72,24 @@ int main()
     std::cout << "Maria: " << cache.get("Maria").value_or("Key not found") << "\n";
 
     std::cout << "\n";
+
+
+    std::cout << "First In First Out cache" << "\n";
+    cchFIFO<std::string, std::string> cacheFIFO(3);
+
+    cacheFIFO.put("GladValakas", "glakPassword");
+    cacheFIFO.put("Mao", "hateSparrows");
+    cacheFIFO.put("Benya", "notKolomoyskyi");
+
+    std::cout << cacheFIFO.get("GladValakas").value_or("Not value") << "\n";
+    std::cout << cacheFIFO.get("Mao").value_or("Not value") << "\n";
+    std::cout << cacheFIFO.get("Benya").value_or("Not value") << "\n";
+
+    cacheFIFO.put("newKey", "password");
+
+    std::cout << cacheFIFO.get("newKey").value_or("Not value") << "\n";
+    std::cout << cacheFIFO.get("GladValakas").value_or("Not value") << "\n";
+
 
     return 0;
 }
