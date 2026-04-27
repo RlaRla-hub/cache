@@ -41,7 +41,7 @@ int main()
 
     std::cout << "Least Frequently Used cache" << "\n";
     //testing size
-    LFU cache(3);
+    LFU<std::string, std::string> cache(3);
     std::cout << "Cachesize: " << cache.getSize() << "\n";
     std::cout << "\n";
 

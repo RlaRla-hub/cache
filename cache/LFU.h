@@ -6,6 +6,7 @@
 #include<optional>
 
 
+template <typename Key, typename Data>
 class LFU
 {
 private:
@@ -13,13 +14,13 @@ private:
 	struct Node
 	{
 	int freq;
-	std::string data;
-	std::string key;
-	Node(int freq_,std::string data_,std::string key_) :freq(freq_),data(data_),key(key_) {}
+	Data data;
+	Key key;
+	Node(int freq_, Data data_, Key key_) : freq(freq_),data(data_),key(key_) {}
 	};
 
-	std::unordered_map<std::string, std::list<Node>::iterator>iteratorsData;
-	std::unordered_map<int, std::list<Node>>counters;
+	std::unordered_map<Key, typename std::list<Node>::iterator> iteratorsData;
+	std::unordered_map<int, std::list<Node>> counters;
 
 	int minFreq;
 
@@ -27,13 +28,13 @@ private:
 
 	void remove()
 	{
-		std::string leastRecentlyUsedKey = counters[minFreq].back().key;
-		std::list<Node>::iterator leastRecentlyUsedIterator = iteratorsData[leastRecentlyUsedKey];
+		Key leastRecentlyUsedKey = counters[minFreq].back().key;
+		typename std::list<Node>::iterator leastRecentlyUsedIterator = iteratorsData[leastRecentlyUsedKey];
 		counters[minFreq].erase(leastRecentlyUsedIterator);
 		iteratorsData.erase(leastRecentlyUsedKey);
 	}
 
-	void update(const std::string& key, const std::string& data)
+	void update(const Key& key, const Data& data)
 	{
 		int oldFreq = iteratorsData[key]->freq;
 		int newFreq = iteratorsData[key]->freq + 1;
@@ -51,27 +52,26 @@ private:
 				minFreq = newFreq;
 			}
 		}
-		std::cout << "\n";
 	}
 
 
 public:
 
-	LFU(size_t size_) :size(size_) {}
+	LFU(size_t size_) :size(size_), minFreq(0) {}
 
-	std::optional<std::string> get(const std::string& key)
+	std::optional<Data> get(const Key& key)
 	{
 		if (!iteratorsData.count(key))
 		{
 			return std::nullopt;
 		}
 
-		std::string data = iteratorsData[key]->data;
+		Data data = iteratorsData[key]->data;
 		update(key, data);
 		return data;
 	}
 
-	void put(const std::string& key, const std::string& data)
+	void put(const Key& key, const Data& data)
 	{
 		if (iteratorsData.count(key))
 		{
@@ -95,7 +95,7 @@ public:
 		return size;
 	}
 
-	size_t getFreq(const std::string& key)
+	size_t getFreq(const Key& key)
 	{
 		return iteratorsData[key]->freq;
 	}

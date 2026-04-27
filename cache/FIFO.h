@@ -18,10 +18,10 @@ public:
 
 	explicit cchFIFO(size_t capacity_) : capacity(capacity_) {}
 
-	template<typenameK>
+	template <typename K>
 	std::optional<Value> get(K&& key)
 	{
-		typenamestd::unordered_map<Key, Value>::iterator it = data.find(std::forward<K>(key));
+		typename std::unordered_map<Key, Value>::iterator it = data.find(std::forward<K>(key));
 		if (it != data.end())
 		{
 			return it->second;
