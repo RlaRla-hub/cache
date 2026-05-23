@@ -9,7 +9,7 @@ template <typename Key, typename Data>
 class LRU
 {
 private:
-	size_t size;
+	size_t capacity;
 	std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator> dataMap;
 	std::list<std::pair<Key, Data>> order;
 
@@ -24,9 +24,9 @@ private:
 	}
 
 public:
-	LRU(size_t size): size(size)
+	LRU(size_t capacity): capacity(capacity)
 	{
-		if (size == 0) 
+		if (capacity == 0)
 			throw std::invalid_argument("LRU capacity cannot be 0");
 	}
 
@@ -46,7 +46,7 @@ public:
 			return;
 		}
 
-		if (dataMap.size() >= size)
+		if (dataMap.size() >= capacity)
 		{
 			expulsion();
 		}
@@ -84,9 +84,9 @@ public:
 		}
 	}
 
-	size_t getSize() const noexcept
+	size_t getCapacity() const noexcept
 	{
-		return size;
+		return capacity;
 	}
 
 	void clear() noexcept

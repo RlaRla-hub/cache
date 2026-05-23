@@ -24,7 +24,7 @@ private:
 
 	int minFreq;
 
-	size_t size;
+	size_t capacity;
 
 	void remove()
 	{
@@ -34,8 +34,11 @@ private:
 		iteratorsData.erase(leastRecentlyUsedKey);
 	}
 
-	void update(const Key& key, const Data& data)
+	template <typename K, typename D>
+	void update(K&& key, D&& data)
 	{
+		static_assert(std::is_convertible_v<std::decay_t<K>, Key>, "K dont convertible to Data");
+
 		int oldFreq = iteratorsData[key]->freq;
 		int newFreq = iteratorsData[key]->freq + 1;
 
@@ -57,10 +60,18 @@ private:
 
 public:
 
-	LFU(size_t size_) :size(size_), minFreq(0) {}
-
-	std::optional<Data> get(const Key& key)
+	LFU(size_t capacity) : capacity(capacity), minFreq(0)
 	{
+		if (capacity == 0)
+			throw std::invalid_argument("LFU capacity cannot be 0");
+	}
+
+
+	template <typename K>
+	std::optional<Data> get(K&& key)
+	{
+		static_assert(std::is_convertible_v<std::decay_t<K>, Key>, "K dont convertible to Data");
+
 		if (!iteratorsData.count(key))
 		{
 			return std::nullopt;
@@ -71,8 +82,12 @@ public:
 		return data;
 	}
 
-	void put(const Key& key, const Data& data)
+	template <typename K, typename D>
+	void put(K&& key, D&& data)
 	{
+		static_assert(std::is_convertible_v<std::decay_t<K>, Key>, "K dont convertible to Data");
+		static_assert(std::is_convertible_v<std::decay_t<D>, Data>, "D dont convertible to Data");
+
 		if (iteratorsData.count(key))
 		{
 			iteratorsData[key]->data = data;
@@ -80,7 +95,7 @@ public:
 			return;
 		}
 
-		if (iteratorsData.size() >= size)
+		if (iteratorsData.size() >= capacity)
 		{
 			remove();
 		}
@@ -90,13 +105,15 @@ public:
 		iteratorsData[key] = counters[0].begin();
 	}
 
-	size_t getSize()
+	size_t getCapacity()
 	{
-		return size;
+		return capacity;
 	}
 
-	std::optional<size_t> getFreq(const Key& key)
+	template <typename K>
+	std::optional<size_t> getFreq(K&& key)
 	{
+		static_assert(std::is_convertible_v<std::decay_t<K>, Key>, "K dont convertible to Data");
 		if (iteratorsData.find(key) == iteratorsData.end())
 		{
 			return std::nullopt;
