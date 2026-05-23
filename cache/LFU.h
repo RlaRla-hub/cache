@@ -32,6 +32,18 @@ private:
 		typename std::list<Node>::iterator leastRecentlyUsedIterator = iteratorsData[leastRecentlyUsedKey];
 		counters[minFreq].erase(leastRecentlyUsedIterator);
 		iteratorsData.erase(leastRecentlyUsedKey);
+
+		if (counters[minFreq].empty())
+		{
+			counters.erase(minFreq);
+			if (!counters.empty())
+			{
+				while (counters.find(minFreq) == counters.end())
+				{
+					++minFreq;
+				}
+			}
+		}
 	}
 
 	template <typename K, typename D>
