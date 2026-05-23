@@ -131,6 +131,7 @@
     <ClInclude Include="FIFO.h" />
     <ClInclude Include="LFU.h" />
     <ClInclude Include="LRU.h" />
+    <ClInclude Include="MRU.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

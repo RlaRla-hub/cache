@@ -2,6 +2,7 @@
 #include "LRU.h"
 #include "LFU.h"
 #include "FIFO.h"
+#include "MRU.h"
 
 int main()
 {
@@ -89,6 +90,31 @@ int main()
 
     std::cout << cacheFIFO.get("newKey").value_or("Not value") << "\n";
     std::cout << cacheFIFO.get("GladValakas").value_or("Not value") << "\n";
+
+
+    MRU<std::string, std::string> mruCache(3);
+
+    mruCache.put("Alice", "password");
+    std::cout << mruCache.get("Alice").value_or("Notvalue") << "\n";
+
+    std::cout << mruCache.get("Boris").value_or("Notvalue") << "\n";
+
+    mruCache.put("Boris", "1234");
+    std::cout << mruCache.get("Boris").value_or("Notvalue") << "\n";
+
+    mruCache.put("Kate", "7777");
+    std::cout << mruCache.get("Kate").value_or("Notvalue") << "\n";
+
+    std::cout << mruCache.get("Alice").value_or("Notvalue") << "\n";
+
+    mruCache.put("Manya", "world");
+    std::cout << mruCache.get("Manya").value_or("Notvalue") << "\n";
+
+
+    std::cout << "" << "\n";
+    std::cout << mruCache.get("Kate").value_or("Notvalue") << "\n";
+    std::cout << mruCache.get("Alice").value_or("Notvalue") << "\n";
+
 
 
     return 0;
