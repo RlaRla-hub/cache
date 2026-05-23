@@ -24,11 +24,20 @@ private:
 	}
 
 public:
-	LRU(size_t size): size(size){}
+	LRU(size_t size): size(size)
+	{
+		if (size == 0) 
+			throw std::invalid_argument("LRU capacity cannot be 0");
+	}
 
 	template<typename K, typename D>
 	void putData(K&& key, D&& data)
 	{
+		static_assert(std::is_convertible_v<std::decay_t<K>, Key>,
+			"K dont convertible to Key");
+		static_assert(std::is_convertible_v<std::decay_t<D>, Data>,
+			"D dont convertible to Data");
+
 		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
 		if (mapIt != dataMap.end())
 		{
@@ -49,6 +58,9 @@ public:
 	template <typename K>
 	std::optional<Data> getData(K&& key) 
 	{
+		static_assert(std::is_convertible_v<std::decay_t<K>, Key>,
+			"K dont convertible to Key");
+		
 		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
 		if (mapIt == dataMap.end()) {
 			return std::nullopt; 
@@ -61,6 +73,9 @@ public:
 	template <typename K>
 	void rmData(K&& key)
 	{
+		static_assert(std::is_convertible_v<std::decay_t<K>, Key>,
+			"K dont convertible to Key");
+		
 		typename std::unordered_map<Key, typename std::list<std::pair<Key, Data>>::iterator>::iterator mapIt = dataMap.find(key);
 		if (mapIt != dataMap.end())
 		{
