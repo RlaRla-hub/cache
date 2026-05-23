@@ -95,9 +95,16 @@ public:
 		return size;
 	}
 
-	size_t getFreq(const Key& key)
+	std::optional<size_t> getFreq(const Key& key)
 	{
-		return iteratorsData[key]->freq;
+		if (iteratorsData.find(key) == iteratorsData.end())
+		{
+			return std::nullopt;
+		}
+		else
+		{
+			return iteratorsData[key]->freq;
+		}
 	}
 };
 
