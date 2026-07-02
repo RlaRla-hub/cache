@@ -22,26 +22,40 @@ private:
 
 	void removeElement()
 	{
-		iterators.erase(orderData.begin()->key);
-		orderData.erase(orderData.begin());
+		if (orderData.empty()) return;
+
+		typename std::list<Node>::iterator lastIt = --orderData.end();
+		iterators.erase(lastIt->key);
+		orderData.erase(lastIt);
 	}
 
 public:
 
-	MRU(size_t capacity_) :capacity(capacity_) {}
+	MRU(size_t capacity_) :capacity(capacity_) 
+	{
+		if (capacity == 0)
+			throw std::invalid_argument("MRU capacity 0");
+	}
 
 	template <typename K, typename D>
 	void put(K&& key, D&& data)
 	{
+		auto it = iterators.find(key);
+		if (it != iterators.end())
+		{
+			it->second->data = std::forward<D>(data);
+			orderData.splice(orderData.begin(), orderData, it->second);
+			return; 
+		}
+
 		if (iterators.size() >= capacity)
 		{
 			removeElement();
 		}
 
-		Node node{ key,data };
-
-		orderData.push_front(node);
-		iterators[key] = orderData.begin();
+		Node node{ std::forward<K>(key), std::forward<D>(data) };
+		orderData.push_front(std::move(node));
+		iterators[node.key] = orderData.begin();
 	}
 
 	template <typename K>
@@ -56,7 +70,7 @@ public:
 		return iterators[key]->data;
 	}
 
-	size_t getCapacity()
+	size_t getCapacity() const noexcept
 	{
 		return capacity;
 	}

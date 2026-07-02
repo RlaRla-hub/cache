@@ -32,6 +32,12 @@ public:
 	template<typename K, typename V>
 	void put(K&& key, V&& value)
 	{
+		auto it = data.find(key);
+		if (it != data.end()) {
+			it->second = std::forward<V>(value);
+			return;  
+		}
+
 		if (data.size() >= capacity)
 		{
 			Key oldestKey = order.front();
